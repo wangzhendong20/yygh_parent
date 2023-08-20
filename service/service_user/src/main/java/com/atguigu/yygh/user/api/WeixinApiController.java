@@ -102,7 +102,9 @@ public class WeixinApiController {
             String token = JwtHelper.createToken(userInfo.getId(), name);
             map.put("token", token);
             //跳转到前端页面
-            return "redirect:" + ConstantWxPropertiesUtils.YYGH_BASE_URL + "/weixin/callback?token="+map.get("token")+ "&openid="+map.get("openid")+"&name="+URLEncoder.encode(map.get("name"),"utf-8");
+//            return "redirect:" + ConstantWxPropertiesUtils.YYGH_BASE_URL + "/weixin/callback?token="+map.get("token")+ "&openid="+map.get("openid")+"&name="+URLEncoder.encode(map.get("name"),"utf-8");
+            return "redirect:"
+                    + ConstantWxPropertiesUtils.YYGH_BASE_URL + "/weixin/callback?token="+map.get("token")+ "&openid="+map.get("openid")+"&name="+map.get("name");
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -114,18 +116,15 @@ public class WeixinApiController {
     @GetMapping("getLoginParam")
     @ResponseBody
     public Result genQrConnect() {
-        try {
-            Map<String, Object> map = new HashMap<>();
-            map.put("appid", ConstantWxPropertiesUtils.WX_OPEN_APP_ID);
-            map.put("scope","snsapi_login");
-            String wxOpenRedirectUrl = ConstantWxPropertiesUtils.WX_OPEN_REDIRECT_URL;
-            wxOpenRedirectUrl = URLEncoder.encode(wxOpenRedirectUrl, "utf-8");
-            map.put("redirect_uri",wxOpenRedirectUrl);
-            map.put("state",System.currentTimeMillis()+"");
-            return Result.ok(map);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("appid", ConstantWxPropertiesUtils.WX_OPEN_APP_ID);
+        map.put("scope","snsapi_login");
+        String wxOpenRedirectUrl =
+                ConstantWxPropertiesUtils.WX_OPEN_REDIRECT_URL;
+//        wxOpenRedirectUrl = URLEncoder.encode(wxOpenRedirectUrl, "utf-8");
+        map.put("redirect_uri",wxOpenRedirectUrl);
+        map.put("state",System.currentTimeMillis()+"");
+        return Result.ok(map);
+
     }
 }

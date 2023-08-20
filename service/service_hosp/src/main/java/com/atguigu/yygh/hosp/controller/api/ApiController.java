@@ -89,6 +89,7 @@ public class ApiController {
         Map<String, Object> paramMap = HttpRequestHelper.switchMap(requestMap);
 
         //TODO 签名校验
+
         scheduleService.save(paramMap);
         return Result.ok();
     }
@@ -103,6 +104,20 @@ public class ApiController {
         String hoscode = (String)paramMap.get("hoscode");
         String depcode = (String)paramMap.get("depcode");
         //TODO 签名校验
+        String hospSign = (String)paramMap.get("sign");
+
+        //2 根据传递过来医院编码，查询数据库，查询签名
+        String signKey = hospitalSetService.getSignKey(hoscode);
+
+        //3 把数据库查询签名进行MD5加密
+        String signKeyMd5 = MD5.encrypt(signKey);
+
+        //4 判断签名是否一致
+        if(!hospSign.equals(signKeyMd5)) {
+            throw new YyghException(ResultCodeEnum.SIGN_ERROR);
+        }
+
+
         departmentService.remove(hoscode,depcode);
         return Result.ok();
     }
@@ -120,6 +135,19 @@ public class ApiController {
         int page = StringUtils.isEmpty(paramMap.get("page")) ? 1 : Integer.parseInt((String)paramMap.get("page"));
         int limit = StringUtils.isEmpty(paramMap.get("limit")) ? 1 : Integer.parseInt((String)paramMap.get("limit"));
         //TODO 签名校验
+        String hospSign = (String)paramMap.get("sign");
+
+        //2 根据传递过来医院编码，查询数据库，查询签名
+        String signKey = hospitalSetService.getSignKey(hoscode);
+
+        //3 把数据库查询签名进行MD5加密
+        String signKeyMd5 = MD5.encrypt(signKey);
+
+        //4 判断签名是否一致
+        if(!hospSign.equals(signKeyMd5)) {
+            throw new YyghException(ResultCodeEnum.SIGN_ERROR);
+        }
+
 
         DepartmentQueryVo departmentQueryVo = new DepartmentQueryVo();
         departmentQueryVo.setHoscode(hoscode);
